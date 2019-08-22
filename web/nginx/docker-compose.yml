@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+
+        web:
+                image: yourfriendbober/nginx_web
+                restart: always
+                ports: 
+                        - 8080:8080
+        
+        nginx:
+                build: ./
+                container_name: nginx
+                ports:
+                        - 80:80
+                links:
+                        - web
