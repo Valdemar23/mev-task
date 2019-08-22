@@ -1,0 +1,88 @@
+---
+- hosts: aws-instances
+  become: yes
+  gather_facts: no
+  vars:
+    component_name: "{{ name_component }}"
+    name_image: "{{ tag_image }}"
+    pas: "{{ password }}"
+  
+  tasks:
+    - name: Start service, if not started
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    # https://docs.ansible.com/ansible/latest/modules/docker_login_module.html
+    - name: Login into DockerHub
+      docker_login:
+        username: yourfriendbober
+        password: "{{ pas }}"
+        config_path: /root/.docker/config.json
+
+    # https://docs.ansible.com/ansible/latest/modules/docker_image_module.html
+    - name: Pull an image "{{ name_image }}"
+      docker_image:
+        name: "{{ name_image }}"
+        source: pull
+
+    - name: User 'operator' creating directory "{{ component_name }}"
+      become: yes
+      become_user: operator
+      file:
+        path: "/home/operator/{{ component_name }}"
+        state: directory
+        mode: 0744
+        owner: operator
+        group: operator
+
+    - name: Copy nginx-Dockerfile for "{{ component_name }}"
+      become: yes
+      become_user: operator
+      copy:
+        src: "/home/jcdenton/Документи/mev-to-git/{{ component_name }}/nginx/Dockerfile"
+        dest: "/home/operator/{{ component_name }}/Dockerfile"
+        owner: operator
+        group: operator
+        mode: '0644'
+
+    - name: Copy docker-compose.yml for "{{ component_name }}"
+      become: yes
+      become_user: operator
+      copy:
+        src: "/home/jcdenton/Документи/mev-to-git/{{ component_name }}/nginx/docker-compose.yml"
+        dest: "/home/operator/{{ component_name }}/docker-compose.yml"
+        owner: operator
+        group: operator
+        mode: '0644'
+
+    - name: Copy nginx.conf for "{{ component_name }}"
+      become: yes
+      become_user: operator
+      copy:
+        src: "/home/jcdenton/Документи/mev-to-git/{{ component_name }}/nginx/nginx.conf"
+        dest: "/home/operator/{{ component_name }}/nginx.conf"
+        owner: operator
+        group: operator
+        mode: '0644'
+
+    - name: Allow all access to port 80
+      ufw: 
+        rule: allow
+        port: 80
+
+    - name: Allow all access to port 4000
+      ufw:
+        rule: allow
+        port: 4000
+        proto: tcp
+    
+    - name: Run the service defined in "{{ component_name }}"-directory 
+      become: yes
+      become_user: operator
+      docker_compose:
+        project_src: "/home/operator/{{ component_name }}"
+        build: yes 
+        restarted: yes
+      register: output
