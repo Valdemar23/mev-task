@@ -1,5 +1,5 @@
 ---
-- hosts: aws-instances
+- hosts: 18.222.71.216
   become: yes
   
   tasks:
