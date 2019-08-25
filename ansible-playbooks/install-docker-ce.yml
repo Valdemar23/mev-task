@@ -1,5 +1,5 @@
 ---
-- hosts: aws-instances
+- hosts: 3.15.21.165
   become: yes
   
   tasks:
