@@ -1,5 +1,5 @@
 ---
-  - name: Create a new Demo EC2 instance
+  - name: Create a new Demo EC2 instance # for success work this playbook needs use python2.7
     hosts: localhost
     connection: local
     # gather_facts: False #this string for launching EC2
