@@ -1,5 +1,5 @@
 ---
-- hosts: 18.222.71.216
+- hosts: localhost
   become: yes
   
   tasks:
