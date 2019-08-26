@@ -1,30 +1,36 @@
 pipeline {
     agent any
     stages {
-        stage('clone git-repo') {
+        stage('Clone git-repo') {
             steps {
                 sh "rm -rf mev-task"
                 sh "git clone https://github.com/Valdemar23/mev-task.git"
             }
         }
-        stage('checking in existing needed tools'){
+        stage('Checking in existing needed tools'){
             steps {
                 sh "cd mev-task/web/nginx && docker-compose ps"
                 sh "cd mev-task/ansible-playbooks && ansible -vvv -m ping aws-instances"
             }
         }
-        stage('starting ansible-playbook which setup infrastructure'){
+        stage('Starting ansible-playbook which setup infrastructure'){
             steps {
                 sh "cd mev-task/ansible-playbooks && ansible-playbook -vvv install-docker-ce.yml"
             }
         }
-        stage('build docker-containers api/spa'){
+        stage('Build docker-containers API/SPA'){
             steps {
                 sh "cd mev-task/api && docker build -t yourfriendbober/nginx_api ."
                 sh "cd mev-task/web && docker build -t yourfriendbober/nginx_web ."
             }
         }
-        stage('deploy api/spa'){
+        stage('Push docker containers to DockerHub'){
+            steps {
+                sh "docker push yourfriendbober/nginx_api"
+                sh "docker push yourfriendbober/nginx_web"
+            }
+        }
+        stage('Deploy API/SPA'){
             steps {
                 sh "cd mev-task/ansible-playbooks && ansible-playbook -vvv deploy.yml --extra-vars \"name_component=web tag_image=yourfriendbober/nginx_web password=xxx\""
                 sh "cd mev-task/ansible-playbooks && ansible-playbook -vvv deploy.yml --extra-vars \"name_component=api tag_image=yourfriendbober/nginx_api password=xxx\""
