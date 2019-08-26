@@ -8,9 +8,6 @@ RUN apt -y update
 
 RUN apt -y install curl
 
-#RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-
-#RUN apt-get install -y nodejs && mkdir -p /home/node-npm/mev-api
 RUN mkdir -p /home/node-npm/mev-api/
 
 COPY ./* /home/node-npm/mev-api/
