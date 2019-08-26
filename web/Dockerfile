@@ -8,7 +8,7 @@ RUN apt -y update
 RUN apt -y install curl
 
 RUN mkdir -p /home/node-npm/mev-spa/
-
+# First parameter copy all files in current directory
 COPY . /home/node-npm/mev-spa/
 
 WORKDIR /home/node-npm/mev-spa
