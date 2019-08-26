@@ -9,7 +9,7 @@ RUN apt -y update
 RUN apt -y install curl
 
 RUN mkdir -p /home/node-npm/mev-api/
-
+# First parameter copy only files (without directory consists) in current directory
 COPY ./* /home/node-npm/mev-api/
 
 WORKDIR /home/node-npm/mev-api
