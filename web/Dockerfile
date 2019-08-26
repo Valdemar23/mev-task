@@ -11,8 +11,6 @@ RUN mkdir -p /home/node-npm/mev-spa/
 
 COPY . /home/node-npm/mev-spa/
 
-#COPY ./home/node-npm/mev-spa/
-
 WORKDIR /home/node-npm/mev-spa
 
 RUN npm install --save                             
@@ -24,4 +22,3 @@ ENV TARGET_URL http://172.17.0.1:4000/ping
 EXPOSE 8080
 
 ENTRYPOINT npm start
-
